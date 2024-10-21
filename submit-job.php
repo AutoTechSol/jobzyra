@@ -67,12 +67,6 @@
 <ul id="jobList"></ul>
 
 <script>
-// Load existing jobs from localStorage on page load
-window.onload = function() {
-    const jobs = JSON.parse(localStorage.getItem("jobs")) || [];
-    jobs.forEach(job => addJobToList(job.title, job.description));
-};
-
 // Function to add a new job
 function addJob() {
     const title = document.getElementById("jobTitle").value.trim();
@@ -80,22 +74,4 @@ function addJob() {
 
     if (title === '' || description === '') {
         alert("You must write a job title and description!");
-        return;
-    }
-
-    addJobToList(title, description);
-    saveJob(title, description);
-
-    // Clear input fields
-    document.getElementById("jobTitle").value = "";
-    document.getElementById("jobDescription").value = "";
-}
-
-// Function to display the job in the list
-function addJobToList(title, description) {
-    const li = document.createElement("li");
-    li.innerHTML = `<strong>${title}</strong><br>${description}<span class="close" onclick="removeJob('${title}')">&times;</span>`;
-    document.getElementById("jobList").appendChild(li);
-}
-
-// Save job to localS
+      
