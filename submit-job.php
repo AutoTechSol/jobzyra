@@ -98,30 +98,4 @@ function addJobToList(title, description) {
     document.getElementById("jobList").appendChild(li);
 }
 
-// Save job to localStorage
-function saveJob(title, description) {
-    const jobs = JSON.parse(localStorage.getItem("jobs")) || [];
-    jobs.push({ title, description });
-    localStorage.setItem("jobs", JSON.stringify(jobs));
-}
-
-// Remove job from the list and localStorage
-function removeJob(title) {
-    const jobList = document.getElementById("jobList");
-    const items = jobList.getElementsByTagName("li");
-
-    for (let i = 0; i < items.length; i++) {
-        if (items[i].innerHTML.includes(title)) {
-            jobList.removeChild(items[i]);
-            break;
-        }
-    }
-
-    let jobs = JSON.parse(localStorage.getItem("jobs")) || [];
-    jobs = jobs.filter(job => job.title !== title);
-    localStorage.setItem("jobs", JSON.stringify(jobs));
-}
-</script>
-
-</body>
-</html>
+// Save job to localS
