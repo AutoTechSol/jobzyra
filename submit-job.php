@@ -1,37 +1,127 @@
-<?php
-// submit-job.php
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+        }
+        .header {
+            background-color: #f44336;
+            padding: 20px;
+            color: white;
+            text-align: center;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .addBtn {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            width: 100%;
+        }
+        .addBtn:hover {
+            background-color: #45a049;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        ul li {
+            background: #eee;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 4px;
+            position: relative;
+        }
+        .close {
+            position: absolute;
+            right: 10px;
+            top: 10px;
+            cursor: pointer;
+            color: #f44336;
+        }
+    </style>
+</head>
+<body>
 
-// Database connection details
-$servername = "localhost";
-$username = "yourusername";
-$password = "yourpassword";
-$dbname = "yourdatabase";
+<div class="header">
+    <h2>Add Job</h2>
+    <input type="text" id="jobTitle" placeholder="Job Title...">
+    <textarea id="jobDescription" placeholder="Job Description..." rows="3"></textarea>
+    <button onclick="addJob()" class="addBtn">Add Job</button>
+</div>
 
-// Create connection
-$conn = new mysqli($servername, $username, $password, $dbname);
+<ul id="jobList"></ul>
 
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
+<script>
+// Load existing jobs from localStorage on page load
+window.onload = function() {
+    const jobs = JSON.parse(localStorage.getItem("jobs")) || [];
+    jobs.forEach(job => addJobToList(job.title, job.description));
+};
+
+// Function to add a new job
+function addJob() {
+    const title = document.getElementById("jobTitle").value.trim();
+    const description = document.getElementById("jobDescription").value.trim();
+
+    if (title === '' || description === '') {
+        alert("You must write a job title and description!");
+        return;
+    }
+
+    addJobToList(title, description);
+    saveJob(title, description);
+
+    // Clear input fields
+    document.getElementById("jobTitle").value = "";
+    document.getElementById("jobDescription").value = "";
 }
 
-// Retrieve form data
-$jobTitle = $_POST['jobTitle'];
-$jobDescription = $_POST['jobDescription'];
-
-// Prepare and bind
-$stmt = $conn->prepare("INSERT INTO jobs (title, description) VALUES (?, ?)");
-$stmt->bind_param("ss", $jobTitle, $jobDescription);
-
-// Execute statement
-if ($stmt->execute()) {
-    echo "New job submitted successfully";
-} else {
-    echo "Error: " . $stmt->error;
+// Function to display the job in the list
+function addJobToList(title, description) {
+    const li = document.createElement("li");
+    li.innerHTML = `<strong>${title}</strong><br>${description}<span class="close" onclick="removeJob('${title}')">&times;</span>`;
+    document.getElementById("jobList").appendChild(li);
 }
 
-// Close statement and connection
-$stmt->close();
-$conn->close();
-?>
+// Save job to localStorage
+function saveJob(title, description) {
+    const jobs = JSON.parse(localStorage.getItem("jobs")) || [];
+    jobs.push({ title, description });
+    localStorage.setItem("jobs", JSON.stringify(jobs));
+}
 
+// Remove job from the list and localStorage
+function removeJob(title) {
+    const jobList = document.getElementById("jobList");
+    const items = jobList.getElementsByTagName("li");
+
+    for (let i = 0; i < items.length; i++) {
+        if (items[i].innerHTML.includes(title)) {
+            jobList.removeChild(items[i]);
+            break;
+        }
+    }
+
+    let jobs = JSON.parse(localStorage.getItem("jobs")) || [];
+    jobs = jobs.filter(job => job.title !== title);
+    localStorage.setItem("jobs", JSON.stringify(jobs));
+}
+</script>
+
+</body>
+</html>
